@@ -1,0 +1,72 @@
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterRoot = localProperties.getProperty('flutter.sdk')
+if (flutterRoot == null) {
+    throw new FileNotFoundException("Flutter SDK not found. Define location with flutter.sdk in the local.properties file.")
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+apply plugin: 'com.android.application'
+apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
+apply plugin: 'com.google.gms.google-services'
+
+android {
+    compileSdkVersion 29
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId "com.signup.signup"
+        minSdkVersion 23
+        targetSdkVersion 29
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        release {
+            // TODO: Add your own signing config for the release build.
+            // Signing with the debug keys for now, so `flutter run --release` works.
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+dependencies {
+
+    implementation 'com.android.support:multidex:1.0.3'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.5.0'
+   // implementation "com.mapbox.navigation:ui:1.1.0"
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.43.0-alpha.1'
+    // Import the BoM for the Firebase platform 
+
+   configurations.all {
+        exclude group:"com.mapbox.mapboxsdk", module: "mapbox-android-plugin-annotation-v8"
+      //  exclude group:"ch.qos.logback", module:"logback-core"
+    }
+
+
+
+
+}
